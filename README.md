@@ -16,7 +16,7 @@ dependencyResolutionManagement {
 }
 
 // app/build.gradle.kts
-implementation("com.github.HubChat-ai:HubChat-android:1.0.0")
+implementation("com.github.HubChat-ai:HubChat-android:1.0.1")
 ```
 
 ## استفاده
