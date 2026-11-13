@@ -29,7 +29,7 @@ afterEvaluate {
                 // JitPack serves the library as com.github.HubChat-ai:HubChat-android:<tag>.
                 groupId = "com.github.HubChat-ai"
                 artifactId = "HubChat-android"
-                version = System.getenv("VERSION") ?: "1.0.1"
+                version = System.getenv("VERSION") ?: "1.0.2"
             }
         }
     }
