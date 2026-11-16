@@ -86,6 +86,28 @@ object HubChat {
         settings?.let(callback) ?: settingsCallbacks.add(callback)
     }
 
+    private var screen: JSONObject? = null
+
+    /**
+     * Tells operators which app screen the user is on (shown next to the chat and in
+     * the panel's visit stats). Call it from each Activity/Fragment or your navigation listener.
+     */
+    @JvmStatic
+    @JvmOverloads
+    fun setScreen(name: String, title: String? = null) {
+        val path = name.trim().trimStart('/')
+        if (path.isEmpty()) return
+        screen = JSONObject().put("source", "hubchat-loader").put("type", "page")
+            .put("url", "app://screen/" + android.net.Uri.encode(path, "/"))
+            .put("title", title ?: name)
+        main.post { sendScreen() }
+    }
+
+    internal fun sendScreen() {
+        val payload = screen ?: return
+        webView?.evaluateJavascript("window.postMessage($payload,'*');", null)
+    }
+
     internal fun command(type: String) {
         webView?.evaluateJavascript("window.postMessage({source:'hubchat-loader',type:'$type'},'*');", null)
     }
@@ -152,7 +174,10 @@ object HubChat {
             main.post {
                 when (val type = data.optString("type")) {
                     "close" -> closeRequest?.invoke()
-                    "ready" -> if (isOpen) command("open")
+                    "ready" -> {
+                        sendScreen()
+                        if (isOpen) command("open")
+                    }
                     "unread" -> if (!isOpen) setUnread(data.optInt("count", unread + 1))
                     else -> Unit
                 }

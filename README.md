@@ -26,7 +26,7 @@ dependencyResolutionManagement {
 }
 
 // app/build.gradle.kts
-implementation("com.github.HubChat-ai:HubChat-android:1.0.2")
+implementation("com.github.HubChat-ai:HubChat-android:1.0.3")
 ```
 
 ## استفاده
@@ -47,6 +47,15 @@ HubChat.open(context)
 
 // تعداد خوانده‌نشده:
 HubChat.addListener(object : HubChatListener { override fun onUnreadChanged(count: Int) { } })
+```
+
+
+### صفحه‌ی فعلی کاربر
+
+اپراتور کنار گفتگو می‌بیند کاربر الان در کدام صفحه‌ی اپ است:
+
+```kotlin
+HubChat.setScreen("checkout", "تکمیل خرید")
 ```
 
 ## پشتیبانی
