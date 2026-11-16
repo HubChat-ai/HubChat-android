@@ -26,7 +26,7 @@ dependencyResolutionManagement {
 }
 
 // app/build.gradle.kts
-implementation("com.github.HubChat-ai:HubChat-android:1.0.3")
+implementation("com.github.HubChat-ai:HubChat-android:1.0.4")
 ```
 
 ## استفاده
@@ -57,6 +57,22 @@ HubChat.addListener(object : HubChatListener { override fun onUnreadChanged(coun
 ```kotlin
 HubChat.setScreen("checkout", "تکمیل خرید")
 ```
+
+### معرفی کاربر لاگین‌کرده
+
+```kotlin
+HubChat.identify(mapOf(
+    "user_id" to user.id,
+    "name" to user.fullName,
+    "mobile" to user.mobile,
+    "custom" to mapOf("plan" to "VIP"),
+    "signature" to signatureFromYourServer, // HMAC-SHA256 شناسه با کلید مخفی، روی سرور
+))
+
+HubChat.logout() // هنگام خروج از حساب
+```
+
+همه‌ی فیلدها و روش ساخت امضا: https://hubchat.ir/docs/widget-identify
 
 ## پشتیبانی
 - مستندات: https://hubchat.ir/docs/connect-channel/mobile_sdk

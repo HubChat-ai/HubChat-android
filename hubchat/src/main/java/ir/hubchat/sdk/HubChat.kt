@@ -103,6 +103,36 @@ object HubChat {
         main.post { sendScreen() }
     }
 
+    private var identity: JSONObject? = null
+    private var pendingLogout = false
+
+    /**
+     * Identifies the logged-in user (name, mobile, email, national_code, …, "custom" map
+     * and the server-made "signature"). See https://hubchat.ir/docs/widget-identify
+     */
+    @JvmStatic
+    fun identify(user: Map<String, Any?>) {
+        identity = JSONObject().put("source", "hubchat-loader").put("type", "identify").put("user", JSONObject(user))
+        main.post { sendIdentity() }
+    }
+
+    /** Call on sign-out: the chat of this user is cleared from the device. */
+    @JvmStatic
+    fun logout() {
+        identity = null
+        pendingLogout = true
+        main.post { sendIdentity() }
+    }
+
+    internal fun sendIdentity() {
+        val view = webView ?: return
+        if (pendingLogout) {
+            pendingLogout = false
+            view.evaluateJavascript("window.postMessage({source:'hubchat-loader',type:'logout'},'*');", null)
+        }
+        identity?.let { view.evaluateJavascript("window.postMessage($it,'*');", null) }
+    }
+
     internal fun sendScreen() {
         val payload = screen ?: return
         webView?.evaluateJavascript("window.postMessage($payload,'*');", null)
@@ -176,6 +206,7 @@ object HubChat {
                     "close" -> closeRequest?.invoke()
                     "ready" -> {
                         sendScreen()
+                        sendIdentity()
                         if (isOpen) command("open")
                     }
                     "unread" -> if (!isOpen) setUnread(data.optInt("count", unread + 1))
